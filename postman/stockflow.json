@@ -1,0 +1,19 @@
+{
+  "info": { "name": "StockFlow Base", "description": "CRUD → pedido transaccional → reportes → 409. Base http://localhost:8080" },
+  "variable": [{ "key": "base", "value": "http://localhost:8080" }],
+  "item": [
+    { "name": "Listar productos", "request": { "method": "GET", "url": "{{base}}/api/productos" } },
+    { "name": "Filtrar productos", "request": { "method": "GET", "url": "{{base}}/api/productos?categoria=Deporte&precioMin=10000&precioMax=40000" } },
+    { "name": "Stock bajo", "request": { "method": "GET", "url": "{{base}}/api/productos/stock-bajo?umbral=5" } },
+    { "name": "Crear producto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"Demo Prod\",\"categoria\":\"Demo\",\"precio\":1000,\"stockActual\":10}" } } },
+    { "name": "Crear producto precio invalido (400)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"Malo\",\"precio\":-5,\"stockActual\":10}" } } },
+    { "name": "Listar clientes", "request": { "method": "GET", "url": "{{base}}/api/clientes" } },
+    { "name": "Email duplicado (409)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/clientes", "body": { "mode": "raw", "raw": "{\"nombre\":\"Dup\",\"email\":\"ana.torres@mail.cl\"}" } } },
+    { "name": "Historial cliente", "request": { "method": "GET", "url": "{{base}}/api/clientes/1/pedidos" } },
+    { "name": "Crear pedido OK (201)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos", "body": { "mode": "raw", "raw": "{\"clienteId\":1,\"items\":[{\"productoId\":1,\"cantidad\":2},{\"productoId\":4,\"cantidad\":1}]}" } } },
+    { "name": "Crear pedido sin stock (409 rollback)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos", "body": { "mode": "raw", "raw": "{\"clienteId\":1,\"items\":[{\"productoId\":1,\"cantidad\":2},{\"productoId\":7,\"cantidad\":1}]}" } } },
+    { "name": "Listar pedidos PENDIENTE", "request": { "method": "GET", "url": "{{base}}/api/pedidos?estado=PENDIENTE" } },
+    { "name": "Reporte ventas", "request": { "method": "GET", "url": "{{base}}/api/reportes/ventas?desde=2026-01-01&hasta=2026-12-31" } },
+    { "name": "Reporte inventario", "request": { "method": "GET", "url": "{{base}}/api/reportes/inventario" } }
+  ]
+}

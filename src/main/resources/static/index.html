@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StockFlow — prueba de endpoints</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}button{margin:.25rem;padding:.5rem 1rem}pre{background:#111;color:#0f0;padding:1rem;overflow:auto;max-height:400px}</style>
+</head>
+<body>
+<h1>StockFlow — consola de prueba (solo demo, no es el foco)</h1>
+<p>El backend expone <code>/api/*</code>. Usá estos botones para probar los endpoints.</p>
+<div id="btns"></div>
+<pre id="out">Listo. Elegí un endpoint…</pre>
+<script>
+const out = document.getElementById('out');
+const show = async (label, res) => {
+  const txt = await res.text();
+  out.textContent = label + ' → ' + res.status + '\n' + txt.slice(0, 4000);
+};
+const calls = [
+  ['GET /api/productos', () => fetch('/api/productos')],
+  ['GET stock-bajo', () => fetch('/api/productos/stock-bajo?umbral=5')],
+  ['GET /api/clientes', () => fetch('/api/clientes')],
+  ['GET /api/pedidos?estado=PENDIENTE', () => fetch('/api/pedidos?estado=PENDIENTE')],
+  ['GET /api/reportes/inventario', () => fetch('/api/reportes/inventario')],
+  ['GET /api/reportes/ventas', () => fetch('/api/reportes/ventas?desde=2026-01-01&hasta=2026-12-31')],
+  ['POST pedido demo (cliente 1, prod 1x1)', () => fetch('/api/pedidos', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({clienteId:1, items:[{productoId:1, cantidad:1}]})})],
+];
+const div = document.getElementById('btns');
+calls.forEach(([label, fn]) => {
+  const b = document.createElement('button');
+  b.textContent = label;
+  b.onclick = () => fn().then(r => show(label, r)).catch(e => out.textContent = String(e));
+  div.appendChild(b);
+});
+</script>
+</body>
+</html>

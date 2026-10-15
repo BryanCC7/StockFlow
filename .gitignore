@@ -1,0 +1,23 @@
+# Maven / build
+target/
+*.class
+
+# Maven wrapper: ignora solo el jar, conserva mvnw, mvnw.cmd y .mvn/wrapper/*.properties
+.mvn/wrapper/*.jar
+
+# H2 portable (archivo local)
+data/
+
+# Logs
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+
+# Env local
+.env

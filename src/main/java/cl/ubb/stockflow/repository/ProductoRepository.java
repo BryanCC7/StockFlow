@@ -22,6 +22,4 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
                          @Param("precioMin") BigDecimal precioMin,
                          @Param("precioMax") BigDecimal precioMax,
                          Pageable pageable);
-
-  Page<Producto> findByCategoriaIgnoreCase(String categoria, Pageable pageable);
 }

@@ -21,6 +21,6 @@ final class PedidoMapper {
         p.getId(),
         p.getCliente() != null ? p.getCliente().getId() : null,
         p.getCliente() != null ? p.getCliente().getNombre() : null,
-        p.getFecha(), p.getEstado().name(), p.getTotal(), detalles);
+        p.getFecha(), p.getEstado().name(), p.getTotal(), p.getVersion(), detalles);
   }
 }

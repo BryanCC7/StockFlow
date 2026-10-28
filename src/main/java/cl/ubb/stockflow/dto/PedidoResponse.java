@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record PedidoResponse(Long id, Long clienteId, String clienteNombre,
-    LocalDateTime fecha, String estado, BigDecimal total,
+    LocalDateTime fecha, String estado, BigDecimal total, Long version,
     List<DetalleResponse> detalles) {
 
   public record DetalleResponse(Long id, Long productoId, String productoNombre,

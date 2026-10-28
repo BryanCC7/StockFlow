@@ -30,5 +30,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
                        @Param("hasta") LocalDateTime hasta,
                        Pageable pageable);
 
-  List<Pedido> findByFechaBetween(LocalDateTime desde, LocalDateTime hasta);
+  @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
+  @Query("SELECT p FROM Pedido p WHERE p.estado <> cl.ubb.stockflow.model.EstadoPedido.CANCELADO"
+      + " AND p.fecha BETWEEN :desde AND :hasta")
+  List<Pedido> buscarVentas(@Param("desde") LocalDateTime desde,
+      @Param("hasta") LocalDateTime hasta);
 }

@@ -46,6 +46,12 @@ public class PedidoController {
     return service.obtener(id);
   }
 
+  @PatchMapping("/{id}/estado")
+  public PedidoResponse cambiarEstado(@PathVariable Long id,
+      @Valid @RequestBody EstadoPedidoRequest req) {
+    return service.cambiarEstado(id, req.estado());
+  }
+
   private static LocalDateTime parseDesde(String s) {
     if (s == null || s.isBlank()) return null;
     try {

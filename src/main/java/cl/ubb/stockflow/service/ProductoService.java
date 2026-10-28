@@ -73,6 +73,6 @@ public class ProductoService {
 
   private ProductoResponse aDto(Producto p) {
     return new ProductoResponse(p.getId(), p.getNombre(), p.getCategoria(),
-        p.getPrecio(), p.getStockActual(), null, p.getCreatedAt(), p.getUpdatedAt());
+        p.getPrecio(), p.getStockActual(), p.getVersion(), p.getCreatedAt(), p.getUpdatedAt());
   }
 }

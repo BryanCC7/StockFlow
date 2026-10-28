@@ -78,6 +78,6 @@ public class ClienteService {
 
   private ClienteResponse aDto(Cliente c) {
     return new ClienteResponse(c.getId(), c.getNombre(), c.getEmail(),
-        c.getTelefono(), null, c.getCreatedAt(), c.getUpdatedAt());
+        c.getTelefono(), c.getVersion(), c.getCreatedAt(), c.getUpdatedAt());
   }
 }

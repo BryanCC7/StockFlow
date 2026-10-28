@@ -26,15 +26,14 @@ public class ReporteService {
   public ReporteVentasResponse ventas(LocalDate desde, LocalDate hasta) {
     LocalDateTime d = (desde != null) ? desde.atStartOfDay() : LocalDateTime.of(2000, 1, 1, 0, 0);
     LocalDateTime h = (hasta != null) ? hasta.atTime(23, 59, 59) : LocalDateTime.now().plusDays(1);
-    List<Pedido> lista = pedidos.findByFechaBetween(d, h);
+    // Trae pedidos no cancelados con detalles y producto en una sola consulta (sin N+1)
+    List<Pedido> lista = pedidos.buscarVentas(d, h);
 
     Map<Long, ReporteVentasResponse.VentaPorProducto> acc = new LinkedHashMap<>();
     BigDecimal total = BigDecimal.ZERO;
     for (Pedido p : lista) {
-      // Carga detalles vía findByIdConDetalle para evitar N+1 parcial; pedidos base trae cliente por EntityGraph
-      Pedido full = pedidos.findByIdConDetalle(p.getId()).orElse(p);
-      total = total.add(full.getTotal());
-      for (var det : full.getDetalles()) {
+      total = total.add(p.getTotal());
+      for (var det : p.getDetalles()) {
         Long pid = det.getProducto().getId();
         var prev = acc.get(pid);
         BigDecimal monto = det.getPrecioUnitario().multiply(BigDecimal.valueOf(det.getCantidad()));

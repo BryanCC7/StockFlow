@@ -6,17 +6,14 @@ Capas Controller / Service / Repository con validación y manejo uniforme de err
 
 ## Requisitos
 
-- JDK 17 o superior.
+- JDK 17 o 21 (recomendado: [Temurin 21](https://adoptium.net/)). Spring Boot 3.3 no soporta JDK 22+.
 - No necesitas tener Maven instalado: el proyecto incluye Maven wrapper.
 
 ## Cómo correr
 
-```bash
-./mvnw test
-./mvnw spring-boot:run
+```powershell
+./mvnw.cmd spring-boot:run
 ```
-
-En Windows usa `mvnw.cmd` en lugar de `./mvnw`.
 
 - API base: http://localhost:8080/api
 - Frontend de prueba: http://localhost:8080/index.html

@@ -1,7 +1,6 @@
 package cl.ubb.stockflow.service;
 
 import cl.ubb.stockflow.dto.*;
-import cl.ubb.stockflow.exception.EstadoInvalidoException;
 import cl.ubb.stockflow.exception.NotFoundException;
 import cl.ubb.stockflow.exception.StockInsuficienteException;
 import cl.ubb.stockflow.model.*;
@@ -77,42 +76,5 @@ public class PedidoService {
   public Page<PedidoResponse> listar(EstadoPedido estado, LocalDateTime desde,
       LocalDateTime hasta, Pageable pageable) {
     return pedidos.filtrar(estado, desde, hasta, pageable).map(PedidoMapper::aDto);
-  }
-
-  /**
-   * Transiciona el estado de un pedido. Reglas: PENDIENTE -> CONFIRMADO o CANCELADO.
-   * CANCELAR devuelve al stock la cantidad descontada por cada item del pedido.
-   * Transicion invalida o estado igual al actual -> 409.
-   */
-  @Transactional
-  public PedidoResponse cambiarEstado(Long id, EstadoPedido destino) {
-    Pedido pedido = pedidos.findByIdConDetalle(id)
-        .orElseThrow(() -> new NotFoundException("Pedido no encontrado id=" + id));
-
-    if (pedido.getEstado() == destino) {
-      throw new EstadoInvalidoException(
-          "El pedido ya se encuentra en estado " + destino);
-    }
-    boolean transicionValida =
-        pedido.getEstado() == EstadoPedido.PENDIENTE
-            && (destino == EstadoPedido.CONFIRMADO || destino == EstadoPedido.CANCELADO);
-    if (!transicionValida) {
-      throw new EstadoInvalidoException(
-          "Transicion invalida: " + pedido.getEstado() + " -> " + destino
-              + ". Solo se permite PENDIENTE -> CONFIRMADO o PENDIENTE -> CANCELADO");
-    }
-
-    pedido.setEstado(destino);
-    if (destino == EstadoPedido.CANCELADO) {
-      // Devuelve el stock descontado al crear el pedido; @Version detecta carreras
-      for (DetallePedido d : pedido.getDetalles()) {
-        Producto p = d.getProducto();
-        p.setStockActual(p.getStockActual() + d.getCantidad());
-        productos.save(p);
-      }
-    }
-    Pedido saved = pedidos.save(pedido);
-    Pedido completo = pedidos.findByIdConDetalle(saved.getId()).orElse(saved);
-    return PedidoMapper.aDto(completo);
   }
 }

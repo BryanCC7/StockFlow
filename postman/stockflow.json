@@ -1,34 +1,67 @@
 {
-  "info": { "name": "StockFlow Base", "description": "CRUD → pedido transaccional → transiciones de estado → reportes → errores. Base http://localhost:8080" },
+  "info": {
+    "name": "StockFlow Base",
+    "description": "CRUD → pedido transaccional → reportes → errores. Base http://localhost:8080",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
   "variable": [{ "key": "base", "value": "http://localhost:8080" }],
   "item": [
-    { "name": "Listar productos", "request": { "method": "GET", "url": "{{base}}/api/productos" } },
-    { "name": "Filtrar productos", "request": { "method": "GET", "url": "{{base}}/api/productos?categoria=Deporte&precioMin=10000&precioMax=40000" } },
-    { "name": "Stock bajo", "request": { "method": "GET", "url": "{{base}}/api/productos/stock-bajo?umbral=5" } },
-    { "name": "Crear producto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"Demo Prod\",\"categoria\":\"Demo\",\"precio\":1000,\"stockActual\":10}" } } },
-    { "name": "Crear producto precio invalido (400)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"Malo\",\"precio\":-5,\"stockActual\":10}" } } },
-    { "name": "Crear producto nombre largo (400 @Size)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaX\",\"precio\":1000,\"stockActual\":10}" } } },
-    { "name": "Producto GET version (version no null)", "request": { "method": "GET", "url": "{{base}}/api/productos/1" } },
-    { "name": "Listar clientes", "request": { "method": "GET", "url": "{{base}}/api/clientes" } },
-    { "name": "Cliente GET version (version no null)", "request": { "method": "GET", "url": "{{base}}/api/clientes/1" } },
-    { "name": "Email duplicado (409)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/clientes", "body": { "mode": "raw", "raw": "{\"nombre\":\"Dup\",\"email\":\"ana.torres@mail.cl\"}" } } },
-    { "name": "Historial cliente 2 (seed CONFIRMADO)", "request": { "method": "GET", "url": "{{base}}/api/clientes/2/pedidos" } },
-    { "name": "Crear pedido OK (201)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos", "body": { "mode": "raw", "raw": "{\"clienteId\":1,\"items\":[{\"productoId\":1,\"cantidad\":2},{\"productoId\":4,\"cantidad\":1}]}" } } },
-    { "name": "Crear pedido sin stock (409 rollback)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos", "body": { "mode": "raw", "raw": "{\"clienteId\":1,\"items\":[{\"productoId\":1,\"cantidad\":2},{\"productoId\":7,\"cantidad\":1}]}" } } },
-    { "name": "Listar pedidos PENDIENTE", "request": { "method": "GET", "url": "{{base}}/api/pedidos?estado=PENDIENTE" } },
-    { "name": "Transicion: confirmar pedido seed 3 (200)", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos/3/estado", "body": { "mode": "raw", "raw": "{\"estado\":\"CONFIRMADO\"}" } } },
-    { "name": "Transicion invalida: confirmar ya confirmado (409)", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos/1/estado", "body": { "mode": "raw", "raw": "{\"estado\":\"CONFIRMADO\"}" } } },
-    { "name": "Transicion a PENDIENTE desde CONFIRMADO (409)", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos/1/estado", "body": { "mode": "raw", "raw": "{\"estado\":\"PENDIENTE\"}" } } },
-    { "name": "Transicion pedido inexistente (404)", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos/999999/estado", "body": { "mode": "raw", "raw": "{\"estado\":\"CONFIRMADO\"}" } } },
-    { "name": "Ver stock Te Verde tras pedido seed 3 (antes de cancelar)", "request": { "method": "GET", "url": "{{base}}/api/productos/2" } },
-    { "name": "Cancelar pedido recien creado (200, devuelve stock)", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos/4/estado", "body": { "mode": "raw", "raw": "{\"estado\":\"CANCELADO\"}" } } },
-    { "name": "Ver stock Te Verde tras cancelar (stock restaurado)", "request": { "method": "GET", "url": "{{base}}/api/productos/2" } },
-    { "name": "Pedido GET version (version no null)", "request": { "method": "GET", "url": "{{base}}/api/pedidos/1" } },
-    { "name": "JSON malformado (400)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{esto no es json" } } },
-    { "name": "Ruta inexistente (404)", "request": { "method": "GET", "url": "{{base}}/api/no-existe" } },
-    { "name": "Metodo no soportado (405)", "request": { "method": "DELETE", "url": "{{base}}/api/reportes/ventas" } },
-    { "name": "Reporte ventas 2025 (solo CONFIRMADO seed)", "request": { "method": "GET", "url": "{{base}}/api/reportes/ventas?desde=2025-01-01&hasta=2025-12-31" } },
-    { "name": "Reporte ventas 2026 (CANCELADO excluido)", "request": { "method": "GET", "url": "{{base}}/api/reportes/ventas?desde=2026-01-01&hasta=2026-12-31" } },
-    { "name": "Reporte inventario", "request": { "method": "GET", "url": "{{base}}/api/reportes/inventario" } }
+    {
+      "name": "Productos",
+      "description": "CRUD de productos, filtros y stock bajo. Incluye lecturas de stock usadas para inspeccionar el efecto de los pedidos.",
+      "item": [
+        { "name": "Listar productos", "request": { "method": "GET", "url": "{{base}}/api/productos" } },
+        { "name": "Filtrar productos", "request": { "method": "GET", "url": "{{base}}/api/productos?categoria=Deporte&precioMin=10000&precioMax=40000" } },
+        { "name": "Stock bajo", "request": { "method": "GET", "url": "{{base}}/api/productos/stock-bajo?umbral=5" } },
+        { "name": "Crear producto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"Demo Prod\",\"categoria\":\"Demo\",\"precio\":1000,\"stockActual\":10}" } } },
+        { "name": "Crear producto precio invalido (400)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"Malo\",\"precio\":-5,\"stockActual\":10}" } } },
+        { "name": "Crear producto nombre largo (400 @Size)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{\"nombre\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaX\",\"precio\":1000,\"stockActual\":10}" } } },
+        { "name": "Producto GET version (version no null)", "request": { "method": "GET", "url": "{{base}}/api/productos/1" } },
+        { "name": "Detalle producto Café Grano 1kg", "request": { "method": "GET", "url": "{{base}}/api/productos/1" } },
+        { "name": "Actualizar producto (200)", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos/1", "body": { "mode": "raw", "raw": "{\"nombre\":\"Café Grano 1kg\",\"categoria\":\"Abarrotes\",\"precio\":9490,\"stockActual\":20,\"version\":0}" } } },
+        { "name": "Eliminar producto Demo (204)", "request": { "method": "DELETE", "url": "{{base}}/api/productos/13" } }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "description": "CRUD de clientes y pedidos por cliente.",
+      "item": [
+        { "name": "Listar clientes", "request": { "method": "GET", "url": "{{base}}/api/clientes" } },
+        { "name": "Cliente GET version (version no null)", "request": { "method": "GET", "url": "{{base}}/api/clientes/1" } },
+        { "name": "Crear cliente (201)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/clientes", "body": { "mode": "raw", "raw": "{\"nombre\":\"Ana López\",\"email\":\"ana.lopez@mail.cl\",\"telefono\":\"+56 9 1234 5678\"}" } } },
+        { "name": "Email duplicado (409)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/clientes", "body": { "mode": "raw", "raw": "{\"nombre\":\"Dup\",\"email\":\"ana.torres@mail.cl\"}" } } },
+        { "name": "Actualizar cliente (200)", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/clientes/1", "body": { "mode": "raw", "raw": "{\"nombre\":\"María González\",\"email\":\"maria.gonzalez@mail.cl\",\"telefono\":\"+56 9 8765 4321\",\"version\":0}" } } },
+        { "name": "Eliminar cliente (204)", "request": { "method": "DELETE", "url": "{{base}}/api/clientes/14" } },
+        { "name": "Historial cliente 2 (seed CONFIRMADO)", "request": { "method": "GET", "url": "{{base}}/api/clientes/2/pedidos" } }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "description": "Creación transaccional, listado con filtros y obtención de un pedido.",
+      "item": [
+        { "name": "Crear pedido OK (201)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos", "body": { "mode": "raw", "raw": "{\"clienteId\":1,\"items\":[{\"productoId\":1,\"cantidad\":2},{\"productoId\":4,\"cantidad\":1}]}" } } },
+        { "name": "Crear pedido sin stock (409 rollback)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/pedidos", "body": { "mode": "raw", "raw": "{\"clienteId\":1,\"items\":[{\"productoId\":1,\"cantidad\":2},{\"productoId\":7,\"cantidad\":1}]}" } } },
+        { "name": "Listar pedidos PENDIENTE", "request": { "method": "GET", "url": "{{base}}/api/pedidos?estado=PENDIENTE" } },
+        { "name": "Pedido GET version (version no null)", "request": { "method": "GET", "url": "{{base}}/api/pedidos/1" } }
+      ]
+    },
+    {
+      "name": "Errores",
+      "description": "Manejo de errores transversales: JSON malformado (400), ruta inexistente (404) y método no soportado (405).",
+      "item": [
+        { "name": "JSON malformado (400)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/api/productos", "body": { "mode": "raw", "raw": "{esto no es json" } } },
+        { "name": "Ruta inexistente (404)", "request": { "method": "GET", "url": "{{base}}/api/no-existe" } },
+        { "name": "Metodo no soportado (405)", "request": { "method": "DELETE", "url": "{{base}}/api/reportes/ventas" } }
+      ]
+    },
+    {
+      "name": "Reportes",
+      "description": "Reporte de ventas por rango de fechas (excluye CANCELADO) y reporte de inventario.",
+      "item": [
+        { "name": "Reporte ventas 2025 (excluye CANCELADO)", "request": { "method": "GET", "url": "{{base}}/api/reportes/ventas?desde=2025-01-01&hasta=2025-12-31" } },
+        { "name": "Reporte ventas 2026 (CANCELADO excluido)", "request": { "method": "GET", "url": "{{base}}/api/reportes/ventas?desde=2026-01-01&hasta=2026-12-31" } },
+        { "name": "Reporte inventario", "request": { "method": "GET", "url": "{{base}}/api/reportes/inventario" } }
+      ]
+    }
   ]
 }

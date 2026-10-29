@@ -80,6 +80,15 @@ class PedidoConsultaTest {
     mvc.perform(get("/api/pedidos/999999")).andExpect(status().isNotFound());
   }
 
+  // Rescate de PedidoEstadoTest: el @NotNull en los elementos de items debe dar 400.
+  @Test
+  void itemNuloEnItemsDevuelve400() throws Exception {
+    mvc.perform(post("/api/pedidos")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"clienteId\":1,\"items\":[null]}"))
+        .andExpect(status().isBadRequest());
+  }
+
   @Test
   void fechaInvalidaDevuelve400() throws Exception {
     mvc.perform(get("/api/pedidos").param("fechaDesde", "no-es-fecha"))

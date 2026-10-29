@@ -29,7 +29,6 @@ En Windows usa `mvnw.cmd` en lugar de `./mvnw`.
 - `POST /api/clientes` · `GET /api/clientes` · `GET/PUT/DELETE /api/clientes/{id}`
 - `GET /api/clientes/{id}/pedidos`
 - `POST /api/pedidos` (201 PENDIENTE / 409 sin stock) · `GET /api/pedidos` · `GET /api/pedidos/{id}`
-- `PATCH /api/pedidos/{id}/estado` (PENDIENTE→CONFIRMADO o CANCELADO; cancelar devuelve stock; 409 si la transición es inválida)
 - `GET /api/reportes/ventas?desde&hasta` · `GET /api/reportes/inventario`
 
 El reporte de ventas excluye pedidos CANCELADO. Las respuestas de producto, cliente y pedido incluyen el campo `version` (bloqueo optimista).

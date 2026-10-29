@@ -20,7 +20,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
   @EntityGraph(attributePaths = {"detalles", "detalles.producto", "cliente"})
   List<Pedido> findByClienteIdOrderByFechaDesc(Long clienteId);
 
-  @EntityGraph(attributePaths = {"cliente"})
+  @EntityGraph(attributePaths = {"detalles", "detalles.producto", "cliente"})
   @Query("SELECT p FROM Pedido p WHERE "
       + "(:estado IS NULL OR p.estado = :estado) AND "
       + "(:desde IS NULL OR p.fecha >= :desde) AND "

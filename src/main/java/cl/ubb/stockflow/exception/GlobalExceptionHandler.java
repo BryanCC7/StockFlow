@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -56,8 +57,7 @@ public class GlobalExceptionHandler {
     return pd;
   }
 
-  @ExceptionHandler({StockInsuficienteException.class, EmailDuplicadoException.class,
-      EstadoInvalidoException.class})
+  @ExceptionHandler({StockInsuficienteException.class, EmailDuplicadoException.class})
   public ProblemDetail conflicto(RuntimeException ex) {
     ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     pd.setTitle("Conflicto");
@@ -125,6 +125,15 @@ public class GlobalExceptionHandler {
         "Método " + ex.getMethod() + " no soportado para este recurso");
     pd.setTitle("Método no soportado");
     pd.setType(URI.create("https://stockflow/errors/metodo-no-soportado"));
+    return pd;
+  }
+
+  @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+  public ProblemDetail tipoContenidoNoSoportado(HttpMediaTypeNotSupportedException ex) {
+    ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        "Content-Type no soportado: " + ex.getContentType());
+    pd.setTitle("Tipo de contenido no soportado");
+    pd.setType(URI.create("https://stockflow/errors/tipo-contenido-no-soportado"));
     return pd;
   }
 

@@ -7,7 +7,7 @@ import java.util.List;
 public record PedidoRequest(
     @NotNull(message = "clienteId es obligatorio") Long clienteId,
     @NotEmpty(message = "items no puede estar vacío")
-    List<@Valid PedidoItemRequest> items) {
+    List<@Valid @NotNull(message = "cada ítem no puede ser nulo") PedidoItemRequest> items) {
 
   public record PedidoItemRequest(
       @NotNull(message = "productoId es obligatorio") Long productoId,
